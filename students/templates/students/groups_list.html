@@ -1,0 +1,83 @@
+{% extends "students/base.html" %}
+{% load static %}
+{% block meta_title %}Студенти{% endblock %}
+{% block title %}База Студентів{% endblock %}
+{% block content %}
+    <a class="btn btn-primary mb-3" href="{% url 'groups_add' %}" role="button">Add group</a>
+                <!-- start groups listing -->
+                <table class="table table-hover table-striped">
+                    {% with order_by=request.GET.order_by reverse=request.GET.reverse %}
+                    <thead>
+                        <tr>
+                            <th><a href="{% url 'groups_list' %}?order_by=id{% if order_by == 'id' and reverse != '1' %}&amp;reverse=1{% endif %}">
+                                #
+                                {% if order_by == 'id'  and reverse != '1' %}&uarr;
+                                {% elif order_by == 'id' and reverse == '1' %}&darr;
+                                {% endif %}
+                                </a>
+                            </th>
+                            <th><a href="{% url 'groups_list' %}?order_by=title{% if order_by == 'title' and reverse != '1' %}&amp;reverse=1{% endif %}">
+                                Title
+                                {% if order_by == 'title' and reverse != '1' or order_by == '' and reverse != '1' %}&uarr;
+                                {% elif order_by == 'title' and reverse == '1' %}&darr;
+                                {% endif %}
+                                </a>
+                            </th>
+                            <th><a href="{% url 'groups_list' %}?order_by=leader{% if order_by == 'leader' and reverse != '1' %}&amp;reverse=1{% endif %}">
+                                First name
+                                {% if order_by == 'leader'  and reverse != '1' %}&uarr;
+                                {% elif order_by == 'leader' and reverse == '1' %}&darr;
+                                {% endif %}
+                                </a></th>
+                            <th>Notes</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    {% endwith %}
+                    <tbody>
+                        {% for group in groups %}
+                        <tr>
+                            <td>{{ group.id }}</td>
+                            <td><a title="Редагувати" href="{% url 'groups_edit' group.id %}">{{ group.title }}</a></td>
+                            <td>{{ group.leader }}</td>
+                            <td>{{ group.notes|truncatechars:20 }}</td>
+                            <td>
+                                <div class="dropdown">
+                                     <a href="#" class="btn btn-primary  dropdown-toggle" data-bs-toggle="dropdown">
+                                        Action</a>
+                                    <div class="dropdown-menu">
+                                        <a class="dropdown-item" href="{% url 'groups_edit' group.id %}">Edit</a>
+                                        <a class="dropdown-item" href="{% url 'groups_delete' group.id %}">Remove</a>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                {% with object_list=groups %}
+                    {% include "students/pagination.html" %}
+                {% endwith %}
+                {% comment %}
+                {% include 'students/pagination.html' %}
+                {% if groups.has_other_pages %}{% with order_by=request.GET.order_by reverse=request.GET.reverse %}
+                    <nav aria-label="Page navigation">
+                        <ul class="pagination">
+                            <li class="page-item">
+                                <a class="page-link" href="{% url 'groups_list' %}?page=1&amp;order_by={{ order_by }}&amp;reverse={{ reverse }}">&laquo;</a>
+                            </li>
+                            {% for p in groups.paginator.page_range %}
+                                <li class="page-item {% if groups.number == p %}active{% endif %}">
+                                    <a class="page-link" href="{% url 'groups_list' %}?page={{ p }}&amp;order_by={{ order_by }}&amp;reverse={{ reverse }}">{{ p }}</a>
+                                </li>
+                            {% endfor %}
+                            <li class="page-item">
+                                <a class="page-link" href="{% url 'groups_list' %}?page={{ groups.paginator.num_pages }}&amp;order_by={{ order_by }}&amp;reverse={{ reverse }}">&raquo;</a>
+                            </li>
+                        </ul>
+                    </nav>
+                {% endwith %}
+                {% endif %}
+                {% endcomment %}
+
+{% endblock %}

@@ -1,0 +1,9 @@
+{% extends "students/base.html" %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% block meta_title %}Редагувати студента{% endblock %}
+{% block title %}Редагувати студента{% endblock %}
+
+{% block content %}
+    {% crispy form %}
+{% endblock %}

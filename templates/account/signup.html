@@ -1,0 +1,33 @@
+{% extends "students/base.html" %}
+
+{% block meta_title %}Register form{% endblock meta_title %}
+
+{% block title %}Register form{% endblock title %}
+
+{% block content %}
+    <form action="{% url 'account_signup' %}" method="POST">
+        {% csrf_token %}
+        <input type="hidden" name="next" value="{% url 'students_list' %}" />
+        <div class="form-group">
+            <label for="login">Your username</label>
+            <input type="text" class="form-control" id="login" value="" name="username" />
+            {{ form.errors.username }}
+        </div>
+        <div class="form-group">
+            <label for="login">Your email</label>
+            <input type="text" class="form-control" id="email" value="" name="email" />
+            {{ form.errors.email }}
+        </div>
+        <div class="form-group">
+            <label for="password">Your password</label>
+            <input type="password" class="form-control" id="password" value="" name="password1" />
+            {{ form.errors.password1 }}
+        </div>
+        <div class="form-group">
+            <label for="password-confirm">Confirm password</label>
+            <input type="password" class="form-control" id="password-confirm" value="" name="password2" />
+            {{ form.errors.password2 }}
+        </div>
+        <button type="submit" class="btn btn-primary">Register</button>
+    </form>
+{% endblock %}

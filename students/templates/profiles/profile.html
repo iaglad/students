@@ -1,0 +1,27 @@
+{% extends "students/base.html" %}
+
+{% block meta_title %}{{ profile_user.get_full_name|default:profile_user.username }}{% endblock meta_title %}
+
+{% block title %}{{ profile_user.get_full_name|default:profile_user.username }}({{ profile_user.username }}){% endblock title %}
+
+{% block content %}
+    <table class="table table-striped">
+        {% if user.email %}
+            <tr>  <td>Email: </td> <td>{{ profile_user.email }}</td> </tr>
+        {% endif %}
+        {% if user.username %}
+            <tr>  <td>Username: </td> <td>{{ profile_user.username }}</td> </tr>
+        {% endif %}
+        {% if user.date_joined %}
+            <tr>  <td>Joined: </td> <td>{{ profile_user.date_joined }}</td> </tr>
+        {% endif %}
+        {% if user.student_profile.mobile_phone %}
+            <tr>  <td>Mobile phone: </td> <td>{{ profile_user.student_profile.mobile_phone }}</td> </tr>
+        {% endif %}
+        {% if user == profile_user%}
+            <tr>
+                <a href="{% url 'account_reset_password' %}">Reset password</a>
+            </tr>
+        {% endif %}
+    </table>
+{% endblock %}

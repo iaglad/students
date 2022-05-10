@@ -1,0 +1,131 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="uk">
+
+<head>
+    <meta charset="UTF-8"/>
+    <title>Сервіс Обліку Студентів - {% block meta_title %}{% endblock %}</title>
+    <meta name="description" content="Система Обліку Студентів Навчального Закладу" />
+    <!-- Include Styles -->
+    <!-- CSS only -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.6.13/flatpickr.min.css">
+    <link rel="stylesheet" href="{{ PORTAL_URL }}{% static "css/main.css" %}">
+    {% block extra_css %}{% endblock  %}
+</head>
+
+<body>
+    <!-- start container -->
+    <div class="container">
+        <!-- start header -->
+        <div class="row mt-3" id="header">
+            <!-- logo -->
+            {% block logo %}
+                <div class="col-sm-8"><h1>Сервіс Обліку Студентів</h1></div>
+            {% endblock %}
+            <!-- groups selector -->
+            {% block group_menu %}
+              {% if user.is_authenticated %}
+                <div class="col-sm-4 d-flex" id="group-selector">
+                    <label for="group" class="mr-1"><strong>Group: </strong></label>
+                    <select class="custom-select" name="group" id="group">
+                        <option value="">All students</option>
+                        {% for group in GROUPS %}
+                            <option value="{{ group.id }}"{% if group.selected %}selected="1"{% endif %}>
+                                {{ group.title }}{% if group.leader %}, {{ group.leader }}{% endif %}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <!--  auth user block -->
+                <div class="col-sm-2 text-right my-auto" id="user-toolbar">
+                    <a href="{% url 'profile' %}">{{ user.get_full_name|default:user.username }}({{ user.username }})</a>
+                    <a href="{% url 'account_logout' %}">Logout</a>
+                </div>
+              {% else %}
+                  <!-- anon user block -->
+                  <div class="col-sm-4 text-right my-auto" id="user-toolbar">
+                    <a href="{% url 'account_login' %}">Login</a> |
+                    <a href="{% url 'account_signup' %}">Register</a>
+                  </div>
+              {% endif %}
+            {% endblock %}
+        </div>
+        <!-- end header -->
+        <!-- startsubheader -->
+        <div class="row" id="sub-header">
+            <div class="col-sm-12">
+                <ul class="nav nav-tabs">
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.path == '/' %}active{% endif %}" href="{% url 'students_list' %}">Students</a>
+                    </li>
+                    {% if user.is_authenticated %}
+                        <li class="nav-item">
+                            <a class="nav-link {% if '/journal' in request.path  %}active{% endif %}" href="/journal">Visiting</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {% if '/groups' in request.path  %}active{% endif %}" href="{% url 'groups_list' %}">Groups</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {% if '/users' in request.path  %}active{% endif %}" href="{% url 'users_list' %}">Users</a>
+                        </li>
+                    {% endif %}
+                    {% if perms.students.can_contact_admin %}
+                        <li class="nav-item">
+                            <a class="nav-link {% if '/contact_admin' in request.path  %}active{% endif %}" href="{% url 'contact_admin' %}">Contact</a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+        <!-- start main page content -->
+        <div class="row" id="content-columns">
+            <div class="col-sm-12" id="content-column">
+                {% block status_message %}
+                    {% if messages %}
+                        <ul class="messages alert alert-warning">
+                            {% for message in messages %}
+                                <li{% if message.tags %} class="{{ message.tags }} dblock"{% endif %}>{{ message }}</li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+                {% endblock %}
+                <h2 class="my-3">{% block title %}{% endblock %}</h2>
+                {% block content %}{% endblock %}
+            </div>
+        </div>
+        <!-- end main page content -->
+        <!--  start footer -->
+        <div class="row" id="footer">
+            <div class="col-sm-12">
+            {% block footer %}    &copy; 2022 Students accounting service  {% endblock %}
+            {{ BASE_DIR }}
+            </div>
+        </div>
+    </div>
+    <!-- end container -->
+    <!--- modal -->
+    <div class="modal fade" id="myModal"  role="dialog" data-bs-backdrop="static"  aria-labelledby="myModalLbael" aria-hidden="true">
+        <div class="modal-dialog" modal-dialog-centered role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="myModalLabel"><!-- --></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body"><!-- --></div>
+                <div class="modal-footer"><!-- --></div>
+            </div>
+        </div>
+    </div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.form/4.3.0/jquery.form.min.js" integrity="sha512-YUkaLm+KJ5lQXDBdqBqk7EVhJAdxRnVdT2vtCzwPHSweCzyMgYV/tgGF4/dCyqtCC2eCphz0lRQgatGVdfR0ww==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.6.13/flatpickr.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.1.3/js/bootstrap.bundle.min.js"></script>
+<script src="{% static 'js/js.cookie.min.js' %}"></script>
+<script src="{% static 'js/main.js' %}"></script>
+{% block extra_js %}{% endblock %}
+
+</body>
+</html>

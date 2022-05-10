@@ -1,0 +1,64 @@
+{% extends "students/base.html" %}
+{% load static %}
+{% block meta_title %}Journal{% endblock %}
+{% block title %}Journal{% endblock %}
+
+{% block content %}
+    {% if not students %}
+        <div class="alert alert-warning">
+            No students. Please <a href="{% url 'students_add' %}">add</a> one
+        </div>
+    {% else %}
+        <div class="alert alert-warning">
+            Check or uncheck day...
+            <span id="ajax-progress-indicator">Йде збереження...</span>
+        </div>
+        <p id="journal-nav" class="text-center">
+            <a href="?month={{ prev_month }}" title="Prev month">&larr;</a>
+            <strong>{{ month_verbose }} {{ year }}</strong>
+            <a href="?month={{ next_month }}" title="Next month">&rarr;</a>
+        </p>
+        <table class="table table-hover table-striped table-bordered" id="students-journal">
+            <thead>
+                <tr class="header">
+                    <th class="num">#</th>
+                    <th class="name">Student</th>
+                    {% for day in month_header %}
+                        <th class="day-header">
+                            {{ day.verbose }}<br />{{ day.day }}
+                        </th>
+                    {% endfor %}
+                </tr>
+            </thead>
+            <tbody>
+                {% csrf_token %}
+                {% for student in students %}
+                    <tr>
+                        <td>
+                            {% if is_paginated %}
+                                {{ page_obj.start_index|add:forloop.counter|add:"-1" }}
+                            {% else %}
+                                {{ forloop.counter }}
+                            {% endif %}
+                        </td>
+                        <td>
+                            <a title="Edit" target="_blank" href="{% url 'students_edit' student.id %}">
+                                {{ student.fullname }}
+                            </a>
+                        </td>
+                        {% for day in student.days %}
+                            <td class="day-box">
+                                <input type="checkbox" data-student-id="{{ student.id }}"
+                                       data-date="{{ day.date }}" data-rl="{{ student.update_url }}"
+                                       value="1" {% if day.present %}checked="checked"{% endif %} />
+                            </td>
+                        {% endfor %}
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
+    {% with object_list=students %}
+        {% include "students/pagination.html" %}
+    {% endwith %}
+{% endblock %}

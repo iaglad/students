@@ -1,0 +1,21 @@
+INFO 2022-05-04 11:00:34,753 signals: Student updated: 123 456 (ID: 25)
+INFO 2022-05-04 11:02:21,847 signals: Student deleted: 123 456 (ID: 25)
+ERROR 2022-05-04 11:07:20,641 contact_admin: Error while sending email!
+Traceback (most recent call last):
+  File "D:\pynix\students_proj\students\views\contact_admin.py", line 39, in contact_admin
+    send_mail(subject, message, from_email, [settings.ADMIN_EMAIL])
+  File "D:\pynix\dj_1\lib\site-packages\django\core\mail\__init__.py", line 87, in send_mail
+    return mail.send()
+  File "D:\pynix\dj_1\lib\site-packages\django\core\mail\message.py", line 298, in send
+    return self.get_connection(fail_silently).send_messages([self])
+  File "D:\pynix\dj_1\lib\site-packages\django\core\mail\backends\smtp.py", line 124, in send_messages
+    new_conn_created = self.open()
+  File "D:\pynix\dj_1\lib\site-packages\django\core\mail\backends\smtp.py", line 91, in open
+    self.connection.login(self.username, self.password)
+  File "C:\Program Files\Python310\lib\smtplib.py", line 750, in login
+    raise last_exception
+  File "C:\Program Files\Python310\lib\smtplib.py", line 739, in login
+    (code, resp) = self.auth(
+  File "C:\Program Files\Python310\lib\smtplib.py", line 662, in auth
+    raise SMTPAuthenticationError(code, resp)
+smtplib.SMTPAuthenticationError: (535, b'5.7.8 Username and Password not accepted. Learn more at\n5.7.8  https://support.google.com/mail/?p=BadCredentials e6-20020adfc846000000b0020c5253d906sm11177615wrh.82 - gsmtp')
